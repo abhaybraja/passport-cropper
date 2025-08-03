@@ -44,3 +44,12 @@ def rotate_to_passport_orientation(image):
         break  # Use the first face found
 
     return image
+
+def draw_text_with_shadow(image, text, position, font=cv2.FONT_HERSHEY_SIMPLEX, font_scale=0.6, text_color=(220, 220, 220), shadow_color=(0, 0, 0), thickness=1):
+    x, y = position
+
+    # Draw black shadow (offset by 2px)
+    cv2.putText(image, text, (x + 2, y + 2), font, font_scale, shadow_color, thickness + 2, cv2.LINE_AA)
+
+    # Draw light text
+    cv2.putText(image, text, (x, y), font, font_scale, text_color, thickness, cv2.LINE_AA)

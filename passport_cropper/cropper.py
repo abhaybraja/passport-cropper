@@ -1,7 +1,7 @@
 import cv2
-from passport_cropper.utils import rotate_to_passport_orientation, save_cropped_with_size_limit
+from passport_cropper.utils import draw_text_with_shadow, rotate_to_passport_orientation, save_cropped_with_size_limit
 
-def crop_passport_photo(image_path:str, output_path="output.jpg", max_size_kb=None):
+def crop_passport_photo(image_path:str, output_path="output.jpg", max_size_kb=None, serial_number: str = None):
     image = cv2.imread(image_path)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     image_copy = image.copy()
@@ -47,6 +47,12 @@ def crop_passport_photo(image_path:str, output_path="output.jpg", max_size_kb=No
 
         # Fix upside-down faces
         passport_ready = rotate_to_passport_orientation(cropped)
+        # Add serial number
+        if serial_number:
+            position = (10, passport_ready.shape[0] - 10)
+            
+            draw_text_with_shadow(passport_ready, serial_number, position)
+
         if max_size_kb:
             save_cropped_with_size_limit(passport_ready, output_path, max_size_kb)
         else:
