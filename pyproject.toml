@@ -1,6 +1,6 @@
 [project]
 name = "passport-cropper"
-version = "0.1.0"
+version = "0.1.1"
 description = "Auto-crop passport photos from scanned documents using face detection."
 readme = "README.md"
 license = {text = "MIT"}
