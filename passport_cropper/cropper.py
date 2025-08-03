@@ -1,9 +1,8 @@
 import cv2
-from .utils import rotate_to_passport_orientation, save_cropped_with_size_limit
+from passport_cropper.utils import rotate_to_passport_orientation, save_cropped_with_size_limit
 
-
-def crop_psp(file:str):
-    image = cv2.imread(file)
+def crop_passport_photo(image_path:str, output_path="output.jpg", max_size_kb=None):
+    image = cv2.imread(image_path)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     image_copy = image.copy()
 
@@ -13,7 +12,7 @@ def crop_psp(file:str):
 
     if len(faces) == 0:
         print("No face detected.")
-        exit()
+        return None
 
     # Assume the first detected face is the one we want
     (x_face, y_face, w_face, h_face) = faces[0]
@@ -45,18 +44,15 @@ def crop_psp(file:str):
 
         # Crop the rectangle
         cropped = image[y:y + h, x:x + w]
-        file_name = file.split(".")[0]
 
         # Fix upside-down faces
         passport_ready = rotate_to_passport_orientation(cropped)
-        save_cropped_with_size_limit(passport_ready, f"m{file_name}.jpg", 25)
-        cv2.imwrite(f"c{file_name}.jpg", passport_ready)
-
-        # Show result
-        # cv2.imshow("Detected Passport Photo Area", image_copy)
-        # cv2.imshow("Cropped Passport Photo", cropped)
+        if max_size_kb:
+            save_cropped_with_size_limit(passport_ready, output_path, max_size_kb)
+        else:
+            cv2.imwrite(output_path, passport_ready)
+        
+        return True
     else:
         print("No surrounding rectangle found around the face.")
-
-crop_psp("your_image_file_here.jpeg")
 
